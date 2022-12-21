@@ -1,0 +1,30 @@
+
+wifi:
+  networks:
+    ssid: "SALNET_IoT"
+    password: !secret iot_psswd
+    manual_ip:
+      static_ip: "${ipPrefix}.${id}"
+      gateway: !secret iot_gateway
+      subnet: !secret subnet
+      dns1: !secret local_ip
+      dns2: 1.1.1.1
+  fast_connect: true
+  reboot_timeout: 0s
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: ${display_name} AP
+    password: !secret fallback_psswd
+
+captive_portal:
+
+logger:
+
+ota:
+  password: !secret ota_psswd
+
+#web_server: 
+
+api:
+  reboot_timeout: 0s

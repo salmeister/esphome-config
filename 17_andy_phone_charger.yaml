@@ -1,0 +1,60 @@
+substitutions:
+  hostname: andy-phone-charger
+  name: andy_phone_charger
+  display_name: "Andy Phone Charger"
+  ipPrefix:  !secret ip_prefix
+  id: "17"
+
+<<: !include base.yaml
+
+esphome:
+  name: ${hostname}
+  platform: ESP8266
+  board: esp01_1m
+  esp8266_restore_from_flash: true
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+    
+#Button
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO1
+      mode: INPUT
+    name: "${name}_button"
+    internal: true
+    on_press:
+      - switch.toggle: ${name}
+      
+  #- platform: status
+  #  name: ${friendly_plug_name} Status
+  #  id: ${name}_status
+
+#Led
+output:
+  - platform: gpio
+    id: led1
+    pin:
+      number: GPIO13
+      inverted: True
+
+light:
+  - platform: binary
+    internal: true
+    output: led1
+    id: status_led
+    restore_mode: RESTORE_DEFAULT_OFF
+
+#Relay    
+switch:
+- platform: gpio
+  id: ${name}
+  name: "${display_name}"
+  pin: GPIO14
+  restore_mode: RESTORE_DEFAULT_OFF
+  on_turn_on:
+    - light.turn_on: status_led
+  on_turn_off:
+    - light.turn_off: status_led

@@ -1,0 +1,58 @@
+substitutions:
+  name: storage-room-power
+  display_name: "Storage Room Power"
+  ipPrefix:  !secret ip_prefix
+  id: "4"
+
+<<: !include base.yaml
+
+# Configuration for TGWF115PQM (Small 10A plug)
+
+esphome:
+  name: ${name}
+  platform: ESP8266
+  board: esp01_1m
+  #includes:
+  #  - espsense.h
+  # Uses the ESPAsyncUDP library
+  #libraries:
+  #  - "ESPAsyncUDP"
+  #  - "ArduinoJson-esphomelib@5.13.3"
+
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+    
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO3
+      inverted: True
+    name: "${name}-button"
+    internal: true
+    on_press:
+      then:
+        - switch.toggle: "relay"
+        # Note that blue LED appears to be tied to relay state internally (i.e. electrically)
+    
+switch:
+  # Main plug control relay
+  - platform: gpio
+    id: relay
+    name: "${display_name}"
+    pin: GPIO14
+    restore_mode: ALWAYS_ON
+    
+  # Used for Status LED below, but could be repurposed!
+  # - platform: gpio
+  #   name: "${name} Green LED"
+  #   id: "led_green"
+  #   pin: GPIO13
+  #   restore_mode: ALWAYS_ON
+  
+status_led:
+  # Use Green LED as ESPHome's built-in status indicator
+  pin:
+    number: GPIO13
+    inverted: False
+    
