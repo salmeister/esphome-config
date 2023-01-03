@@ -2,7 +2,7 @@ substitutions:
   name: up-bt-proxy
   display_name: "Upstairs Bluetooth Proxy"
   ipPrefix:  !secret ip_prefix
-  id: "10"
+  id: "14"
 
 <<: !include base.yaml
 

@@ -27,4 +27,6 @@ ota:
 #web_server: 
 
 api:
+  encryption:
+    key: !secret esphome_encryption_key 
   reboot_timeout: 0s
