@@ -1,6 +1,6 @@
 substitutions:
-  name: up-bath-night-light
-  display_name: "Up Bath Night Light"
+  devicename: up-bath-night-light
+  fullname: "Up Bath Night Light"
   ipPrefix:  !secret ip_prefix
   id: "6"
 
@@ -9,15 +9,9 @@ substitutions:
 # Configuration for TGWF115PQM (Small 10A plug)
 
 esphome:
-  name: ${name}
+  name: ${devicename}
   platform: ESP8266
   board: esp01_1m
-  #includes:
-  #  - espsense.h
-  # Uses the ESPAsyncUDP library
-  #libraries:
-  #  - "ESPAsyncUDP"
-  #  - "ArduinoJson-esphomelib@5.13.3"
 
 time:
   - platform: homeassistant
@@ -28,18 +22,18 @@ binary_sensor:
     pin:
       number: GPIO3
       inverted: True
-    name: "${name}-button"
+    id: button
     internal: true
     on_press:
       then:
-        - switch.toggle: "relay"
+        - switch.toggle: relay
         # Note that blue LED appears to be tied to relay state internally (i.e. electrically)
     
 switch:
   # Main plug control relay
   - platform: gpio
     id: relay
-    name: "${display_name}"
+    name: "${fullname}"
     pin: GPIO14
     restore_mode: ALWAYS_OFF
     

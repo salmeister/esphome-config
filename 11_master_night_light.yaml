@@ -1,6 +1,6 @@
 substitutions:
-  name: master-night-light
-  display_name: "Master Night Light"
+  devicename: master-night-light
+  fullname: "Master Night Light"
   ipPrefix:  !secret ip_prefix
   id: "11"
 
@@ -9,15 +9,9 @@ substitutions:
 # Configuration for TGWF115PQM (Small 10A plug)
 
 esphome:
-  name: ${name}
+  name: ${devicename}
   platform: ESP8266
   board: esp01_1m
-  includes:
-    - espsense.h
-  # Uses the ESPAsyncUDP library
-  libraries:
-    - "ESPAsyncUDP"
-    - "ArduinoJson-esphomelib@5.13.3"
 
 time:
   - platform: homeassistant
@@ -28,18 +22,18 @@ binary_sensor:
     pin:
       number: GPIO3
       inverted: True
-    name: "${name} Button"
+    id: button
     internal: true
     on_press:
       then:
-        - switch.toggle: "relay"
+        - switch.toggle: relay
         # Note that blue LED appears to be tied to relay state internally (i.e. electrically)
     
 switch:
   # Main plug control relay
   - platform: gpio
-    name: "${display_name}"
-    id: "relay"
+    name: ${fullname}
+    id: relay
     pin: GPIO14
     restore_mode: ALWAYS_OFF
     
@@ -55,69 +49,3 @@ status_led:
   pin:
     number: GPIO13
     inverted: False
-
-sensor:
-  - platform: hlw8012
-    sel_pin:
-      number: GPIO12
-      inverted: True
-    cf_pin: GPIO04
-    cf1_pin: GPIO5
-    current_resistor: "0.00228"
-    voltage_divider: "2120"
-    current:
-      name: "${name} Amperage"
-      internal: true
-      unit_of_measurement: A
-      filters:
-        # - calibrate_linear:
-        #   # Map X (from sensor) to Y (true value)
-        #   # At least 2 data points required
-        #   - 0.0 -> 0.0
-        #   - 1.0 -> 1.0 #load was on
-    voltage:
-      name: "${name} Voltage"
-      internal: true
-      unit_of_measurement: V
-      filters:
-        # - calibrate_linear:
-        #   # Map X (from sensor) to Y (true value)
-        #   # At least 2 data points required
-        #   - 0.0 -> 0.0
-        #   - 1.0 -> 1.0 #load was on
-    power:
-      id: "wattage"
-      name: "${name} Wattage"
-      internal: true
-      unit_of_measurement: W
-      filters:
-        # Moving average filter to try and reduce a periodic drop of ~1-2W
-        # Unsure of cause, may be a better solution!
-        - sliding_window_moving_average:
-            window_size: 2
-            send_every: 1
-        # - calibrate_linear:
-        #   # Map X (from sensor) to Y (true value)
-        #   # At least 2 data points required
-        #   - 0.0 -> 0.0
-        #   - 1.0 -> 1.0 #load was on
-    change_mode_every: 8
-    update_interval: 3s # Longer interval gives better accuracy
-    
-  - platform: total_daily_energy
-    name: "${name} Total Daily Energy"
-    internal: true
-    power_id: "wattage"
-    filters:
-        # Multiplication factor from W to kW is 0.001
-        - multiply: 0.001
-    unit_of_measurement: kWh
-
-# Extra sensor to keep track of plug uptime
-  - platform: uptime
-    name: ${name} Uptime Sensor
-    
-custom_component:
-- lambda: |-
-    auto sensor_power = new ESPSense(id(wattage), 120);
-    return {sensor_power};

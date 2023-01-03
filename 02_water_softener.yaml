@@ -1,13 +1,13 @@
 substitutions:
-  name: water-softener
-  display_name: "Water Softener Salt Level"
+  devicename: water-softener
+  fullname: "Water Softener Salt Level"
   ipPrefix:  !secret ip_prefix
   id: "2"
 
 <<: !include base.yaml
 
 esphome:
-  name: ${name}
+  name: ${devicename}
   platform: ESP8266
   board: d1_mini
 
@@ -18,7 +18,7 @@ sensor:
     unit_of_measurement: "%"
     icon: "mdi:cup-water"
     accuracy_decimals: 0
-    name: ${display_name}
+    name: ${fullname}
     update_interval: 1d
   
     filters:

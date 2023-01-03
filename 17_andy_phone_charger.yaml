@@ -1,14 +1,13 @@
 substitutions:
-  hostname: andy-phone-charger
-  name: andy_phone_charger
-  display_name: "Andy Phone Charger"
+  devicename: andy-phone-charger
+  fullname: "Andy Phone Charger"
   ipPrefix:  !secret ip_prefix
   id: "17"
 
 <<: !include base.yaml
 
 esphome:
-  name: ${hostname}
+  name: ${devicename}
   platform: ESP8266
   board: esp01_1m
   esp8266_restore_from_flash: true
@@ -23,10 +22,10 @@ binary_sensor:
     pin:
       number: GPIO1
       mode: INPUT
-    name: "${name}_button"
+    id: button
     internal: true
     on_press:
-      - switch.toggle: ${name}
+      - switch.toggle: relay
       
   #- platform: status
   #  name: ${friendly_plug_name} Status
@@ -50,8 +49,8 @@ light:
 #Relay    
 switch:
 - platform: gpio
-  id: ${name}
-  name: "${display_name}"
+  id: relay
+  name: "${fullname}"
   pin: GPIO14
   restore_mode: RESTORE_DEFAULT_OFF
   on_turn_on:

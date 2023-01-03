@@ -1,14 +1,13 @@
 substitutions:
-  hostname: router-fan
-  name: router_fan
-  display_name: "Router Fan"
+  devicename: router-fan
+  fullname: "Router Fan"
   ipPrefix:  !secret ip_prefix
   id: "03"
 
 <<: !include base.yaml
 
 esphome:
-  name: ${hostname}
+  name: ${devicename}
   platform: ESP8266
   board: esp01_1m
 
@@ -25,7 +24,7 @@ binary_sensor:
     name: "${name}_button"
     internal: true
     on_press:
-      - switch.toggle: ${name}
+      - switch.toggle: switch
       
   #- platform: status
   #  name: ${display_name} Status
@@ -49,8 +48,8 @@ light:
 #Relay    
 switch:
 - platform: gpio
-  id: ${name}
-  name: "${display_name}"
+  id: switch
+  name: "${fullname}"
   pin: GPIO14
   restore_mode: ALWAYS_OFF
   on_turn_on:

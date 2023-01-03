@@ -1,13 +1,13 @@
 substitutions:
-  name: sump-level
-  display_name: "Sump Level"
+  devicename: sump-level
+  fullname: "Sump Level"
   ipPrefix:  !secret ip_prefix
   id: "7"
 
 <<: !include base.yaml
 
 esphome:
-  name: ${name}
+  name: ${devicename}
   platform: ESP8266
   board: d1_mini_lite
 
@@ -19,7 +19,7 @@ sensor:
     unit_of_measurement: "cm"
     icon: "mdi:cup-water"
     accuracy_decimals: 0
-    name: ${display_name}
+    name: ${fullname}
     update_interval: 120s
   
     filters:

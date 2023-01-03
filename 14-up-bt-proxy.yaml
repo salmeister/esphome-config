@@ -1,6 +1,6 @@
 substitutions:
-  name: up-bt-proxy
-  display_name: "Upstairs Bluetooth Proxy"
+  devicename: up-bt-proxy
+  fullname: "Upstairs Bluetooth Proxy"
   ipPrefix:  !secret ip_prefix
   id: "14"
 
@@ -9,7 +9,7 @@ substitutions:
 improv_serial:
 
 esphome:
-  name: ${name}
+  name: ${devicename}
   name_add_mac_suffix: true
   project:
     name: esphome.bluetooth-proxy

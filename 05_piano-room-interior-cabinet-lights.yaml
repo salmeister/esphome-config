@@ -1,14 +1,13 @@
 substitutions:
-  hostname: piano-room-in-cab-lights
-  name: piano-room-interior-cabinet-lights
-  display_name: "Piano Room Interior Cabinet"
+  devicename: piano-room-in-cab-lights
+  fullname: "Piano Room Interior Cabinet"
   ipPrefix:  !secret ip_prefix
   id: "5"
   
 <<: !include base.yaml
 
 esphome:
-  name: ${hostname}
+  name: ${devicename}
   platform: ESP8266
   board: esp8285
 
@@ -21,7 +20,7 @@ binary_sensor:
     pin:
       number: GPIO13
       inverted: True
-    name: "${name}-button"
+    id: button
     internal: true
     on_press:
       - switch.toggle: relay
@@ -52,7 +51,7 @@ light:
 switch:
 - platform: gpio
   id: relay
-  name: "${display_name}"
+  name: "${fullname}"
   pin: GPIO04
   restore_mode: ALWAYS_OFF
   on_turn_on:
@@ -78,7 +77,7 @@ sensor:
     cf1_pin: GPIO14
     current:
       internal: true
-      name: "${name}-amperage"
+      id: amperage
       unit_of_measurement: A
       icon: "mdi:flash-circle"
       accuracy_decimals: 3
@@ -101,7 +100,7 @@ sensor:
         - lambda: if (x < 0.02) return 0; else return (x - 0.02);
     voltage:
       internal: true
-      name: "${name}-voltage"
+      id: voltage
       unit_of_measurement: V
       icon: "mdi:flash-circle"
       accuracy_decimals: 1
@@ -119,7 +118,7 @@ sensor:
             - 317.37436 -> 123.0
     power:
       internal: true
-      name: "${name}-wattage"
+      id: wattage
       unit_of_measurement: W
       icon: "mdi:flash-circle"
       accuracy_decimals: 0

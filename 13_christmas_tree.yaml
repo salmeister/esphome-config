@@ -1,14 +1,13 @@
 substitutions:
-  hostname: christmas-tree
-  name: christmas_tree
-  display_name: "Christmas Tree"
+  devicename: christmas-tree
+  fullname: "Christmas Tree"
   ipPrefix:  !secret ip_prefix
   id: "13"
 
 <<: !include base.yaml
 
 esphome:
-  name: ${hostname}
+  name: ${devicename}
   platform: ESP8266
   board: esp01_1m
   esp8266_restore_from_flash: true
@@ -23,10 +22,10 @@ binary_sensor:
     pin:
       number: GPIO1
       mode: INPUT
-    name: "${name}_button"
+    id: button
     internal: true
     on_press:
-      - switch.toggle: ${name}
+      - switch.toggle: relay
       
   #- platform: status
   #  name: ${display_name} Status
@@ -50,8 +49,8 @@ light:
 #Relay    
 switch:
 - platform: gpio
-  id: ${name}
-  name: "${display_name}"
+  id: relay
+  name: "${devicename}"
   pin: GPIO14
   restore_mode: RESTORE_DEFAULT_ON
   on_turn_on:

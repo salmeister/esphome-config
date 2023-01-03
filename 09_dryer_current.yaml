@@ -1,20 +1,20 @@
 substitutions:
-  name: dryer-current
-  display_name: "Dryer Current"
+  devicename: dryer-current
+  fullname: "Dryer Current"
   ipPrefix:  !secret ip_prefix
   id: "9"
 
 <<: !include base.yaml
 
 esphome:
-  name: ${name}
+  name: ${devicename}
   platform: ESP8266
   board: d1_mini_lite
 
 sensor:
   - platform: ct_clamp
     sensor: adc_sensor
-    name: ${display_name}
+    name: ${fullname}
     unit_of_measurement: "A"
     icon: "mdi:lightning-bolt-circle"
     id: dryer_current
@@ -31,7 +31,7 @@ sensor:
 
 binary_sensor:
   - platform: template
-    name: "${display_name} Status"
+    name: "${fullname} Status"
     filters:
       - delayed_on: 240s
       - delayed_off: 240s

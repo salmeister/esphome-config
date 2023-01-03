@@ -1,9 +1,9 @@
 substitutions:
-  devicename: back-entry-light
-  shortname: "Back Entry"
-  fullname: "Back Entry Light"
+  devicename: lower-foyer-light
+  fullname: "Lower Foyer Light"
+  shortname: "Lower Foyer"
   ipPrefix:  !secret ip_prefix
-  id: "19"
+  id: "20"
 
 <<: !include base.yaml
 
@@ -30,7 +30,6 @@ light:
     warm_white: warm_white
     cold_white_color_temperature: 6535 K
     warm_white_color_temperature: 2702 K
-    default_transition_length: 0s
     restore_mode: RESTORE_DEFAULT_OFF
 
 output:

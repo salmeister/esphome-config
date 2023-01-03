@@ -1,14 +1,13 @@
 substitutions:
-  hostname: fireplace-switch
-  name: fireplace-switch
-  display_name: "Fireplace Switch"
+  devicename: fireplace-lights
+  fullname: "Fireplace Lights"
   ipPrefix:  !secret ip_prefix
   id: "10"
 
 <<: !include base.yaml
 
 esphome:
-  name: ${hostname}
+  name: ${devicename}
 
 time:
   - platform: homeassistant
@@ -41,28 +40,28 @@ improv_serial:
 button:
   - platform: restart
     id: restart_button
-    name: "${display_name} Restart"
+    name: "${fullname} Restart"
 
   - platform: safe_mode
     id: restart_button_safe_mode
-    name: "${display_name} Restart (Safe Mode)"
+    name: "${fullname} Restart (Safe Mode)"
 
 
 text_sensor:
   - platform: version
-    name: "${display_name} ESPHome Version"
+    name: "${fullname} ESPHome Version"
 
   - platform: wifi_info
     ip_address:
-      name: "${display_name} IP Address"
+      name: "${fullname} IP Address"
     mac_address:
-      name: "${display_name} MAC Address"
+      name: "${fullname} MAC Address"
 
 
 number:
   - platform: template # time the relay is ON when triggered by motion
     id: motion_delay
-    name: ${display_name} Motion Delay
+    name: ${fullname} Motion Delay
     optimistic: true
     restore_value: true
     entity_category: config
@@ -75,7 +74,7 @@ number:
 
   - platform: template # time the relay is ON when triggered by button
     id: button_delay
-    name: ${display_name} Button Delay
+    name: ${fullname} Button Delay
     optimistic: true
     restore_value: true
     entity_category: config
@@ -88,7 +87,7 @@ number:
 
   - platform: template # cooldown time when physical button is pressed
     id: motion_cooldown
-    name: ${display_name} Motion Cooldown
+    name: ${fullname} Motion Cooldown
     optimistic: true
     restore_value: true
     entity_category: config
@@ -109,7 +108,7 @@ output:
 light:
   - platform: status_led # blue LED
     id: blue_status
-    name: ${display_name} Blue LED
+    name: ${fullname} Blue LED
     pin:
       number: GPIO13
       inverted: true
@@ -175,7 +174,7 @@ binary_sensor:
 
   - platform: gpio # motion sensor
     id: motion
-    name: ${display_name} Motion
+    name: ${fullname} Motion
     pin:
       number: GPIO5
       inverted: true
@@ -194,7 +193,7 @@ binary_sensor:
 
   - platform: gpio # light sensor
     id: daylight
-    name: ${display_name} Daylight
+    name: ${fullname} Daylight
     pin: GPIO14
     device_class: light
     filters:
@@ -217,12 +216,12 @@ binary_sensor:
 switch:
   - platform: gpio # relay
     id: relay
-    name: ${display_name}
+    name: ${fullname}
     pin: GPIO12
 
   - platform: template # enable / disable motion
     id: motion_enabled
-    name: ${display_name} Motion Enabled
+    name: ${fullname} Motion Enabled
     restore_state: true
     optimistic: true
     entity_category: config
@@ -230,7 +229,7 @@ switch:
 
   - platform: template # enable / disable nightlight
     id: nightlight_enabled
-    name: ${display_name} Nightlight Enabled
+    name: ${fullname} Nightlight Enabled
     restore_state: true
     optimistic: true
     entity_category: config

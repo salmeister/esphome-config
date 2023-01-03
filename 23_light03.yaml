@@ -1,14 +1,14 @@
 substitutions:
-  hostname: front-closet-light
-  name: front_closet_light
-  display_name: "Front Closet"
+  devicename: front-closet-light
+  fullname: "Front Closet Light"
+  shortname: "Front Closet"
   ipPrefix: !secret ip_prefix
   id: "23"
   
 <<: !include base.yaml
 
 esphome:
-  name: ${name}
+  name: ${devicename}
   platform: ESP8266
   board: esp01_1m
   esp8266_restore_from_flash: true
@@ -36,7 +36,7 @@ output:
 
 light:
   - platform: rgbww
-    name: ${display_name}
+    name: ${shortname}
     restore_mode: RESTORE_DEFAULT_ON
     constant_brightness: true
     color_interlock: true

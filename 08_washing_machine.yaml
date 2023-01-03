@@ -1,7 +1,6 @@
 substitutions:
-  hostname: washing-machine
-  name: washing_machine
-  display_name: "Washing Machine"
+  devicename: washing-machine
+  fullname: "Washing Machine"
   ipPrefix:  !secret ip_prefix
   id: "8"
 
@@ -10,7 +9,7 @@ substitutions:
 # Configuration for TGWF115PQM (Small 10A plug)
 
 esphome:
-  name: ${hostname}
+  name: ${devicename}
   platform: ESP8266
   board: esp01_1m
   includes:
@@ -29,21 +28,21 @@ binary_sensor:
     pin:
       number: GPIO3
       inverted: True
-    name: "${name}_button"
+    id: button
     internal: true
     on_press:
       then:
-        - switch.toggle: "relay"
+        - switch.toggle: relay
         # Note that blue LED appears to be tied to relay state internally (i.e. electrically)
   - platform: template
-    name: "${name} Status"
+    name: "${fullname} Status"
     filters:
       - delayed_on: 240s
       - delayed_off: 120s
     lambda: |-
-      if (isnan(id(${name}_wattage).state)) {
+      if (isnan(id(wattage).state)) {
         return {};
-      } else if (id(${name}_wattage).state > 3) {
+      } else if (id(wattage).state > 3) {
         return true;
       } else {
         return false;
@@ -54,7 +53,6 @@ switch:
   - platform: gpio
     internal: true
     id: relay
-    name: "${name}"
     pin: GPIO14
     restore_mode: ALWAYS_ON
     
@@ -81,7 +79,8 @@ sensor:
     current_resistor: "0.00228"
     voltage_divider: "2120"
     current:
-      name: "${name}_amperage"
+      name: "${fullname} Amperage"
+      id: amperage
       unit_of_measurement: A
       icon: "mdi:lightning-bolt-circle"
       accuracy_decimals: 3
@@ -95,7 +94,8 @@ sensor:
         # Furthermore it corrects for the power usage of the plug.
         - lambda: if (x < (0.01 + 0.01)) return 0; else return (x - 0.01);
     voltage:
-      name: "${name}_voltage"
+      name: "${fullname} Voltage"
+      id: voltage
       unit_of_measurement: V
       icon: "mdi:lightning-bolt-circle"
       accuracy_decimals: 1
@@ -106,10 +106,10 @@ sensor:
         #   - 0.0 -> 0.0
         #   - 1.0 -> 1.0 #load was on
     power:
-      name: "${name}_wattage"
+      name: "${fullname} Wattage"
       unit_of_measurement: W
       icon: "mdi:lightning-bolt-circle"
-      id: "${name}_wattage"
+      id: wattage
       accuracy_decimals: 0
       filters:
         # Moving average filter to try and reduce a periodic drop of ~1-2W
@@ -133,9 +133,9 @@ sensor:
     update_interval: 10s
     
   - platform: total_daily_energy
-    name: "${name} Total Daily Energy"
+    name: "${fullname} Total Daily Energy"
     internal: true
-    power_id: "${name}_wattage"
+    power_id: wattage
     filters:
         # Multiplication factor from W to kW is 0.001
         - multiply: 0.001
@@ -144,5 +144,5 @@ sensor:
 # Extra sensor to keep track of plug uptime
   - platform: uptime
     internal: true
-    name: ${name} Uptime Sensor
+    name: ${fullname} Uptime Sensor
     

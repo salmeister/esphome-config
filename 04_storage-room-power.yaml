@@ -1,6 +1,6 @@
 substitutions:
-  name: storage-room-power
-  display_name: "Storage Room Power"
+  devicename: storage-room-power
+  fullname: "Storage Room Power"
   ipPrefix:  !secret ip_prefix
   id: "4"
 
@@ -9,7 +9,7 @@ substitutions:
 # Configuration for TGWF115PQM (Small 10A plug)
 
 esphome:
-  name: ${name}
+  name: ${devicename}
   platform: ESP8266
   board: esp01_1m
   #includes:
@@ -28,18 +28,18 @@ binary_sensor:
     pin:
       number: GPIO3
       inverted: True
-    name: "${name}-button"
+    id: button
     internal: true
     on_press:
       then:
-        - switch.toggle: "relay"
+        - switch.toggle: relay
         # Note that blue LED appears to be tied to relay state internally (i.e. electrically)
     
 switch:
   # Main plug control relay
   - platform: gpio
     id: relay
-    name: "${display_name}"
+    name: "${fullname}"
     pin: GPIO14
     restore_mode: ALWAYS_ON
     

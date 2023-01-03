@@ -1,13 +1,13 @@
 substitutions:
-  name: karlee-string-lights
-  display_name: "Karlee String Lights"
+  devicename: karlee-string-lights
+  fullname: "Karlee String Lights"
   ipPrefix:  !secret ip_prefix
   id: "12"
 
 <<: !include base.yaml
 
 esphome:
-  name: ${name}
+  name: ${devicename}
   platform: ESP8266
   board: esp01_1m
 
@@ -20,7 +20,7 @@ binary_sensor:
     pin:
       number: GPIO13
       inverted: True
-    name: "${name}_button"
+    id: button
     internal: true
     on_press:
       - switch.toggle: relay
@@ -51,7 +51,7 @@ light:
 switch:
 - platform: gpio
   id: relay
-  name: "${display_name}"
+  name: "${fullname}"
   pin: GPIO15
   restore_mode: ALWAYS_OFF
   on_turn_on:

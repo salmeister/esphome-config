@@ -1,14 +1,13 @@
 substitutions:
-  hostname: seasonal-plug-2
-  name: seasonal_plug_2
-  display_name: "Seasonal Plug 2"
+  devicename: seasonal-plug-2
+  fullname: "Seasonal Plug 2"
   ipPrefix:  !secret ip_prefix
   id: "18"
 
 <<: !include base.yaml
 
 esphome:
-  name: ${hostname}
+  name: ${devicename}
   platform: ESP8266
   board: esp01_1m
   esp8266_restore_from_flash: true
@@ -23,10 +22,10 @@ binary_sensor:
     pin:
       number: GPIO1
       mode: INPUT
-    name: "${name}_button"
+    id: button
     internal: true
     on_press:
-      - switch.toggle: ${name}
+      - switch.toggle: relay
       
   #- platform: status
   #  name: ${display_name} Status
@@ -50,8 +49,8 @@ light:
 #Relay    
 switch:
 - platform: gpio
-  id: ${name}
-  name: "${display_name}"
+  id: relay
+  name: "${fullname}"
   pin: GPIO14
   restore_mode: RESTORE_DEFAULT_OFF
   on_turn_on:

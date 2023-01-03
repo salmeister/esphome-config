@@ -1,6 +1,5 @@
 substitutions:
-  name: crock_pot
-  hostname: crock-pot
+  devicename: crock-pot
   display_name: "Crock-Pot"
   ipPrefix:  !secret ip_prefix
   id: "16"
@@ -8,7 +7,7 @@ substitutions:
 <<: !include base.yaml
 
 esphome:
-  name: ${hostname}
+  name: ${devicename}
   platform: ESP8266
   board: esp8285
 
@@ -18,17 +17,17 @@ time:
 
 text_sensor:
   - platform: template
-    name: "${name}_state"
-    id: "${name}_state"
+    name: "${display_name} State"
+    id: state
     lambda: |-
-      if (id(${name}_wattage).state > 220) {
+      if (id(wattage).state > 220) {
         return {"High"};
       } else {
-          if (id(${name}_wattage).state > 65) {
+          if (id(wattage).state > 65) {
             return {"Low"};
           }
           else {
-            if (id(${name}_wattage).state > 2) {
+            if (id(wattage).state > 2) {
               return {"Warm"};
             }
             else {
@@ -42,7 +41,7 @@ binary_sensor:
     pin:
       number: GPIO13
       inverted: True
-    name: "${name}_button"
+    name: button
     internal: true
     on_press:
       - switch.toggle: relay
@@ -73,7 +72,7 @@ light:
 switch:
 - platform: gpio
   id: relay
-  name: "${display_name}"
+  name: "${fullname}"
   pin: GPIO04
   restore_mode: RESTORE_DEFAULT_OFF
   on_turn_on:
@@ -99,7 +98,8 @@ sensor:
     cf_pin: GPIO05
     cf1_pin: GPIO14
     current:
-      name: "${name}_amperage"
+      name: "${fullname} Amperage"
+      id: amperage
       unit_of_measurement: A
       icon: "mdi:lightning-bolt-circle"
       accuracy_decimals: 3
@@ -122,7 +122,8 @@ sensor:
         - lambda: if (x < 0.02) return 0; else return (x - 0.02);
       
     voltage:
-      name: "${name}_voltage"
+      name: "${fullname} Voltage"
+      id: voltage
       unit_of_measurement: V
       icon: "mdi:lightning-bolt-circle"
       accuracy_decimals: 1
@@ -139,10 +140,10 @@ sensor:
             - 317.23810 -> 122.7
             - 317.37436 -> 123.0
     power:
-      name: "${name}_wattage"
+      name: "${fullname} Wattage"
       unit_of_measurement: W
       icon: "mdi:lightning-bolt-circle"
-      id: "${name}_wattage"
+      id: wattage
       accuracy_decimals: 0
       filters:
         # Map from sensor -> measured value
