@@ -1,13 +1,14 @@
 substitutions:
-  devicename: seasonal-plug-2
-  fullname: "Seasonal Plug 2"
+  devicename: andy-phone-charger
+  fullname: "Andy Phone Charger"
   ipPrefix:  !secret ip_prefix
-  id: "18"
+  id: "17"
 
 <<: !include base.yaml
 
 esphome:
   name: ${devicename}
+  comment: ${ipPrefix}.${id}
   platform: ESP8266
   board: esp01_1m
   esp8266_restore_from_flash: true
@@ -28,7 +29,7 @@ binary_sensor:
       - switch.toggle: relay
       
   #- platform: status
-  #  name: ${display_name} Status
+  #  name: ${friendly_plug_name} Status
   #  id: ${name}_status
 
 #Led

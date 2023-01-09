@@ -8,6 +8,7 @@ substitutions:
 
 esphome:
   name: ${devicename}
+  comment: ${ipPrefix}.${id}
   platform: ESP8266
   board: d1_mini_lite
 

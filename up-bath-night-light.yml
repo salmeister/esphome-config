@@ -1,8 +1,8 @@
 substitutions:
-  devicename: storage-room-power
-  fullname: "Storage Room Power"
+  devicename: up-bath-night-light
+  fullname: "Up Bath Night Light"
   ipPrefix:  !secret ip_prefix
-  id: "4"
+  id: "6"
 
 <<: !include base.yaml
 
@@ -10,14 +10,9 @@ substitutions:
 
 esphome:
   name: ${devicename}
+  comment: ${ipPrefix}.${id}
   platform: ESP8266
   board: esp01_1m
-  #includes:
-  #  - espsense.h
-  # Uses the ESPAsyncUDP library
-  #libraries:
-  #  - "ESPAsyncUDP"
-  #  - "ArduinoJson-esphomelib@5.13.3"
 
 time:
   - platform: homeassistant
@@ -41,7 +36,7 @@ switch:
     id: relay
     name: "${fullname}"
     pin: GPIO14
-    restore_mode: ALWAYS_ON
+    restore_mode: ALWAYS_OFF
     
   # Used for Status LED below, but could be repurposed!
   # - platform: gpio

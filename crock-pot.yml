@@ -1,26 +1,48 @@
 substitutions:
-  devicename: piano-room-in-cab-lights
-  fullname: "Piano Room Interior Cabinet"
+  devicename: crock-pot
+  fullname: "Crock-Pot"
   ipPrefix:  !secret ip_prefix
-  id: "5"
-  
+  id: "16"
+
 <<: !include base.yaml
 
 esphome:
   name: ${devicename}
+  comment: ${ipPrefix}.${id}
   platform: ESP8266
   board: esp8285
 
 time:
   - platform: homeassistant
     id: homeassistant_time
+
+text_sensor:
+  - platform: template
+    name: "${fullname} State"
+    id: state
+    lambda: |-
+      if (id(wattage).state > 220) {
+        return {"High"};
+      } else {
+          if (id(wattage).state > 65) {
+            return {"Low"};
+          }
+          else {
+            if (id(wattage).state > 2) {
+              return {"Warm"};
+            }
+            else {
+              return {"Off"};
+            }
+          }
+      }
     
 binary_sensor:
   - platform: gpio
     pin:
       number: GPIO13
       inverted: True
-    id: button
+    name: button
     internal: true
     on_press:
       - switch.toggle: relay
@@ -42,18 +64,18 @@ light:
   - platform: monochromatic
     output: b_led
     id: blue_led
-    restore_mode: ALWAYS_OFF
+    restore_mode: RESTORE_DEFAULT_OFF
   - platform: monochromatic
     output: r_led
     id: red_led
-    restore_mode: ALWAYS_ON
+    restore_mode: RESTORE_DEFAULT_OFF
     
 switch:
 - platform: gpio
   id: relay
   name: "${fullname}"
   pin: GPIO04
-  restore_mode: ALWAYS_OFF
+  restore_mode: RESTORE_DEFAULT_OFF
   on_turn_on:
     - light.turn_on: blue_led
   on_turn_off:
@@ -68,6 +90,7 @@ switch:
 #  pin: GPIO00
 #  inverted: True
 #  restore_mode: ALWAYS_OFF
+
 sensor:
   - platform: hlw8012
     sel_pin:
@@ -76,10 +99,10 @@ sensor:
     cf_pin: GPIO05
     cf1_pin: GPIO14
     current:
-      internal: true
+      name: "${fullname} Amperage"
       id: amperage
       unit_of_measurement: A
-      icon: "mdi:flash-circle"
+      icon: "mdi:lightning-bolt-circle"
       accuracy_decimals: 3
       filters:
         # Map from sensor -> measured value
@@ -98,11 +121,12 @@ sensor:
         # Make everything below 0.02A appear as just 0A.
         # Furthermore it corrects for the power usage of the plug.
         - lambda: if (x < 0.02) return 0; else return (x - 0.02);
+      
     voltage:
-      internal: true
+      name: "${fullname} Voltage"
       id: voltage
       unit_of_measurement: V
-      icon: "mdi:flash-circle"
+      icon: "mdi:lightning-bolt-circle"
       accuracy_decimals: 1
       filters:
         # Map from sensor -> measured value
@@ -117,10 +141,10 @@ sensor:
             - 317.23810 -> 122.7
             - 317.37436 -> 123.0
     power:
-      internal: true
-      id: wattage
+      name: "${fullname} Wattage"
       unit_of_measurement: W
-      icon: "mdi:flash-circle"
+      icon: "mdi:lightning-bolt-circle"
+      id: wattage
       accuracy_decimals: 0
       filters:
         # Map from sensor -> measured value
@@ -141,4 +165,4 @@ sensor:
         # Furthermore it corrects for the power usage of the plug.
         - lambda: if (x < (1 + .9)) return 0; else return (x - .9);
     change_mode_every: 8
-    update_interval: 500s
+    update_interval: 10s

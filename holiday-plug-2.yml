@@ -1,15 +1,17 @@
 substitutions:
-  devicename: router-fan
-  fullname: "Router Fan"
+  devicename: holiday-plug-2
+  fullname: "Holiday Plug 2"
   ipPrefix:  !secret ip_prefix
-  id: "03"
+  id: "18"
 
 <<: !include base.yaml
 
 esphome:
   name: ${devicename}
+  comment: ${ipPrefix}.${id}
   platform: ESP8266
   board: esp01_1m
+  esp8266_restore_from_flash: true
 
 time:
   - platform: homeassistant
@@ -21,10 +23,10 @@ binary_sensor:
     pin:
       number: GPIO1
       mode: INPUT
-    name: "${name}_button"
+    id: button
     internal: true
     on_press:
-      - switch.toggle: switch
+      - switch.toggle: relay
       
   #- platform: status
   #  name: ${display_name} Status
@@ -43,15 +45,15 @@ light:
     internal: true
     output: led1
     id: status_led
-    restore_mode: ALWAYS_OFF
+    restore_mode: RESTORE_DEFAULT_OFF
 
 #Relay    
 switch:
 - platform: gpio
-  id: switch
+  id: relay
   name: "${fullname}"
   pin: GPIO14
-  restore_mode: ALWAYS_OFF
+  restore_mode: RESTORE_DEFAULT_OFF
   on_turn_on:
     - light.turn_on: status_led
   on_turn_off:

@@ -10,7 +10,7 @@ improv_serial:
 
 esphome:
   name: ${devicename}
-  name_add_mac_suffix: true
+  comment: ${ipPrefix}.${id}
   project:
     name: esphome.bluetooth-proxy
     version: "1.0"

@@ -1,6 +1,7 @@
 substitutions:
-  devicename: fireplace-lights
-  fullname: "Fireplace Lights"
+  devicename: fireplace-lights-switch
+  shortname: "Fireplace Lights"
+  fullname: "Fireplace Lights Switch"
   ipPrefix:  !secret ip_prefix
   id: "10"
 
@@ -8,6 +9,7 @@ substitutions:
 
 esphome:
   name: ${devicename}
+  comment: ${ipPrefix}.${id}
 
 time:
   - platform: homeassistant
@@ -216,7 +218,7 @@ binary_sensor:
 switch:
   - platform: gpio # relay
     id: relay
-    name: ${fullname}
+    name: ${shortname}
     pin: GPIO12
 
   - platform: template # enable / disable motion

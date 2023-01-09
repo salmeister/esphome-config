@@ -1,16 +1,16 @@
 substitutions:
-  devicename: christmas-tree
-  fullname: "Christmas Tree"
+  devicename: smart-plug
+  fullname: "Smart Plug"
   ipPrefix:  !secret ip_prefix
-  id: "13"
+  id: "3"
 
 <<: !include base.yaml
 
 esphome:
   name: ${devicename}
+  comment: ${ipPrefix}.${id}
   platform: ESP8266
   board: esp01_1m
-  esp8266_restore_from_flash: true
 
 time:
   - platform: homeassistant
@@ -22,7 +22,7 @@ binary_sensor:
     pin:
       number: GPIO1
       mode: INPUT
-    id: button
+    name: "${name}_button"
     internal: true
     on_press:
       - switch.toggle: relay
@@ -44,15 +44,15 @@ light:
     internal: true
     output: led1
     id: status_led
-    restore_mode: RESTORE_DEFAULT_ON
+    restore_mode: ALWAYS_OFF
 
 #Relay    
 switch:
 - platform: gpio
   id: relay
-  name: "${devicename}"
+  name: "${fullname}"
   pin: GPIO14
-  restore_mode: RESTORE_DEFAULT_ON
+  restore_mode: ALWAYS_OFF
   on_turn_on:
     - light.turn_on: status_led
   on_turn_off:

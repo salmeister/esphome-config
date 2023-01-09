@@ -1,26 +1,28 @@
 substitutions:
-  devicename: water-softener
-  fullname: "Water Softener Salt Level"
+  devicename: sump-level
+  fullname: "Sump Level"
   ipPrefix:  !secret ip_prefix
-  id: "2"
+  id: "7"
 
 <<: !include base.yaml
 
 esphome:
   name: ${devicename}
+  comment: ${ipPrefix}.${id}
   platform: ESP8266
-  board: d1_mini
+  board: d1_mini_lite
+
 
 sensor:
   - platform: ultrasonic
     trigger_pin: D1
     echo_pin: D2
-    unit_of_measurement: "%"
+    unit_of_measurement: "cm"
     icon: "mdi:cup-water"
     accuracy_decimals: 0
     name: ${fullname}
-    update_interval: 1d
+    update_interval: 120s
   
     filters:
-      - lambda: return ((85-((x*100)-9))/85)*100;
+      - lambda: return 43-(x*100);
       - filter_out: nan

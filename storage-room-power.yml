@@ -1,8 +1,8 @@
 substitutions:
-  devicename: master-night-light
-  fullname: "Master Night Light"
+  devicename: storage-room-power
+  fullname: "Storage Room Power"
   ipPrefix:  !secret ip_prefix
-  id: "11"
+  id: "4"
 
 <<: !include base.yaml
 
@@ -10,8 +10,15 @@ substitutions:
 
 esphome:
   name: ${devicename}
+  comment: ${ipPrefix}.${id}
   platform: ESP8266
   board: esp01_1m
+  #includes:
+  #  - espsense.h
+  # Uses the ESPAsyncUDP library
+  #libraries:
+  #  - "ESPAsyncUDP"
+  #  - "ArduinoJson-esphomelib@5.13.3"
 
 time:
   - platform: homeassistant
@@ -32,10 +39,10 @@ binary_sensor:
 switch:
   # Main plug control relay
   - platform: gpio
-    name: ${fullname}
     id: relay
+    name: "${fullname}"
     pin: GPIO14
-    restore_mode: ALWAYS_OFF
+    restore_mode: ALWAYS_ON
     
   # Used for Status LED below, but could be repurposed!
   # - platform: gpio
@@ -49,3 +56,4 @@ status_led:
   pin:
     number: GPIO13
     inverted: False
+    
