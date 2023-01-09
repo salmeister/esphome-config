@@ -1,15 +1,22 @@
 substitutions:
-  devicename: lower-foyer-light
-  fullname: "Lower Foyer Light"
-  shortname: "Lower Foyer"
+  devicename: fireplace-right-light
+  shortname: "Fireplace Right"
+  fullname: "Fireplace Right Light"
   ipPrefix:  !secret ip_prefix
-  id: "20"
+  id: "24"
 
 <<: !include base.yaml
 
 esphome:
   name: ${devicename}
-  comment: ${fullname}
+  comment: "${ipPrefix}.${id}"
+  on_boot:
+    then:
+      - light.turn_on: 
+          id: downlight
+          brightness: 100%
+          cold_white: 45%
+          warm_white: 100%
 
 libretuya:
   board: wb3s
@@ -22,6 +29,7 @@ time:
 
 light:
   - platform: rgbww
+    id: downlight
     name: ${shortname}
     red: red
     green: green
@@ -30,7 +38,8 @@ light:
     warm_white: warm_white
     cold_white_color_temperature: 6535 K
     warm_white_color_temperature: 2702 K
-    restore_mode: RESTORE_DEFAULT_OFF
+    default_transition_length: 0s
+    restore_mode: RESTORE_DEFAULT_ON
 
 output:
   - platform: ledc
