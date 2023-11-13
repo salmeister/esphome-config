@@ -4,13 +4,10 @@ substitutions:
   ipPrefix:  !secret ip_prefix
   id: "14"
 
-<<: !include base.yaml
-
-improv_serial:
+packages:
+  device_base: !include base.yaml
 
 esphome:
-  name: ${devicename}
-  comment: ${ipPrefix}.${id}
   project:
     name: esphome.bluetooth-proxy
     version: "1.0"

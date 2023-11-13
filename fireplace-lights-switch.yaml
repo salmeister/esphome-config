@@ -3,62 +3,26 @@ substitutions:
   shortname: "Fireplace Lights"
   fullname: "Fireplace Lights Switch"
   ipPrefix:  !secret ip_prefix
-  id: "10"
+  id: "49"
 
-<<: !include base.yaml
-
-esphome:
-  name: ${devicename}
-  comment: ${ipPrefix}.${id}
-
-time:
-  - platform: homeassistant
-    id: homeassistant_time
+packages:
+  device_base: !include base.yaml
     
 esp8266:
   board: esp01_1m
+  restore_from_flash: true
       
-# https://templates.blakadder.com/cloudfree_SWM1.html
-# https://templates.blakadder.com/milfra_MFA05.html
+# https://templates.blakadder.com/milfra_MFA06.html
 
 # | GPIO   | Component |
 # | ------ | --------- |
-# | GPIO0  | button |
-# | GPIO5  | motion |
-# | GPIO12 | relay |
+# | GPIO0  | bottom button |
+# | GPIO4  | top button |
+# | GPIO5  | motion sensor |
+# | GPIO12 | relay 1 |
 # | GPIO13 | blue led |
 # | GPIO14 | light sensor |
-# | GPIO16 | green led |
-
-# GPIO16 boots HIGH which means the green led is ON.
-# This is an issue because of the green led takes precendence over the blue led
-# To deal with this, GPIO16 must be set LOW after boot which is done using the output component.
-# This component defaults to OFF so the user DOES NOT need to use
-#    (I) output.turn_off
-#     or (II) digitalWrite(16, LOW) after boot
-
-improv_serial:
-
-button:
-  - platform: restart
-    id: restart_button
-    name: "${fullname} Restart"
-
-  - platform: safe_mode
-    id: restart_button_safe_mode
-    name: "${fullname} Restart (Safe Mode)"
-
-
-text_sensor:
-  - platform: version
-    name: "${fullname} ESPHome Version"
-
-  - platform: wifi_info
-    ip_address:
-      name: "${fullname} IP Address"
-    mac_address:
-      name: "${fullname} MAC Address"
-
+# | GPIO16 | relay 2 |
 
 number:
   - platform: template # time the relay is ON when triggered by motion
@@ -101,10 +65,10 @@ number:
     unit_of_measurement: s
 
 
-output:
-  - platform: gpio # green LED
-    id: green_led
-    pin: GPIO16
+#output:
+#  - platform: gpio # green LED
+#    id: green_led
+#    pin: GPIO
 
 
 light:
@@ -126,7 +90,7 @@ light:
 
 binary_sensor:
   - platform: gpio # physical button
-    id: relay_button
+    id: bottom_button
     pin:
       number: GPIO0
       mode: INPUT_PULLUP
@@ -136,43 +100,66 @@ binary_sensor:
           - ON for at most 1s
           - OFF for at least 0.2s
         then:
-          - switch.toggle: relay
+          - switch.toggle: top_relay
           - if:
               condition:
                 - switch.is_on: motion_enabled
               then:
                 - script.execute: cooldown
-              else:
-                if:
-                  condition:
-                    not:
-                      - script.is_running: cooldown
-                  then:
-                    - script.execute: button_timeout
-          - delay: 100ms
-          - wait_until:
-              condition:
-                - not:
-                    script.is_running: cooldown
-                - not:
-                    script.is_running: button_timeout
-          - if:
-              condition:
-                - binary_sensor.is_off: motion
-              then:
-                - switch.turn_off: relay
+          #    else:
+          #      if:
+          #        condition:
+          #          not:
+          #            - script.is_running: cooldown
+          #        then:
+          #          - script.execute: button_timeout
+          #- delay: 100ms
+          #- wait_until:
+          #    condition:
+          #      - not:
+          #          script.is_running: cooldown
+          #      - not:
+          #          script.is_running: button_timeout
+          #- if:
+          #    condition:
+          #      - binary_sensor.is_off: motion
+          #    then:
+          #      - switch.turn_off: top_relay
+          #      - switch.turn_off: bottom_relay
       - timing: # enable / disable motion
           - ON for 2s to 5s
         then:
           - script.execute: motion_toggle
-      - timing: # software restart
-          - ON for 6s to 9s
+      #- timing: # software restart
+      #    - ON for 6s to 9s
+      #  then:
+      #    - button.press: restart_button
+      #- timing: # software restart into safe mode
+      #    - ON for at least 10s
+      #  then:
+      #    - button.press: restart_button_safe_mode
+
+  - platform: gpio # physical button
+    id: top_button
+    pin:
+      number: GPIO4
+      mode: INPUT_PULLUP
+      inverted: True
+    on_multi_click:
+      - timing: # toggle relay & motion / button timeouts
+          - ON for at most 1s
+          - OFF for at least 0.2s
         then:
-          - button.press: restart_button
-      - timing: # software restart into safe mode
-          - ON for at least 10s
+          - switch.toggle: top_relay
+          - if:
+              condition:
+                - switch.is_on: motion_enabled
+              then:
+                - script.execute: cooldown
+      - timing: # enable / disable motion
+          - ON for 2s to 5s
         then:
-          - button.press: restart_button_safe_mode
+          - script.execute: motion_toggle
 
   - platform: gpio # motion sensor
     id: motion
@@ -189,7 +176,8 @@ binary_sensor:
           condition:
             - switch.is_on: motion_enabled
           then:
-            - switch.turn_on: relay
+            - switch.turn_on: top_relay
+            - switch.turn_on: bottom_relay
     on_release:
       - script.execute: motion_timeout
 
@@ -217,14 +205,22 @@ binary_sensor:
 
 switch:
   - platform: gpio # relay
-    id: relay
+    id: top_relay
     name: ${shortname}
     pin: GPIO12
+    on_turn_on:
+      - switch.turn_on: bottom_relay
+    on_turn_off:
+      - switch.turn_off: bottom_relay
+
+  - platform: gpio # relay
+    id: bottom_relay
+    pin: GPIO16
 
   - platform: template # enable / disable motion
     id: motion_enabled
     name: ${fullname} Motion Enabled
-    restore_state: true
+    restore_mode: RESTORE_DEFAULT_ON 
     optimistic: true
     entity_category: config
     device_class: switch
@@ -232,7 +228,7 @@ switch:
   - platform: template # enable / disable nightlight
     id: nightlight_enabled
     name: ${fullname} Nightlight Enabled
-    restore_state: true
+    restore_mode: RESTORE_DEFAULT_OFF
     optimistic: true
     entity_category: config
     device_class: switch
@@ -249,7 +245,8 @@ script:
           condition:
             - switch.is_on: motion_enabled
           then:
-            - switch.turn_off: relay
+            - switch.turn_off: top_relay
+            - switch.turn_off: bottom_relay
 
   - id: motion_toggle
     mode: queued
@@ -257,7 +254,8 @@ script:
       - switch.toggle: motion_enabled
       - if:
           condition:
-            - switch.is_off: relay
+            - switch.is_off: top_relay
+            - switch.is_off: bottom_relay
           then:
             - light.turn_on:
                 id: blue_status

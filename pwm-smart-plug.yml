@@ -3,25 +3,20 @@ substitutions:
   fullname: "PWM Smart Plug"
   ipPrefix:  !secret ip_prefix
   id: "5"
-  
-<<: !include base.yaml
 
-esphome:
-  name: ${devicename}
-  comment: ${ipPrefix}.${id}
-  platform: ESP8266
+packages:
+  device_base: !include base.yaml
+
+esp8266:
   board: esp8285
-
-time:
-  - platform: homeassistant
-    id: homeassistant_time
+  restore_from_flash: true
     
 binary_sensor:
   - platform: gpio
     pin:
       number: GPIO13
       inverted: True
-    id: button
+    id: physical_button
     internal: true
     on_press:
       - switch.toggle: relay

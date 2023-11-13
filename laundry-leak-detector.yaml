@@ -1,0 +1,60 @@
+substitutions:
+  devicename: laundry-leak-detector
+  fullname: "Laundry Leak Detector"
+  ipPrefix:  !secret ip_prefix
+  id: "51"
+
+packages:
+  device_base: !include base.yaml
+
+esphome:
+  platform: ESP8266
+  board: d1_mini
+
+sensor:   
+  - platform: adc
+    pin: A0
+    icon: mdi:water-alert
+    name: "Leak"
+    id: leak
+    update_interval: 3s
+    filters:
+      - multiply: 3.3
+    internal: true  
+     
+binary_sensor:
+  - platform: template
+    name: "Laundry Leak Status"
+    lambda: |-
+         float analog = id(leak).state;
+         return analog < 2.55; 
+    on_press:
+      then:
+        - switch.turn_on: leak_status_led_blink
+    on_release:
+      then:
+        - switch.turn_off: leak_status_led_blink
+
+switch:
+  - platform: gpio
+    name: Leak Sensor Status LED
+    id: leak_status_led
+    pin:
+      number: D4
+    inverted: true
+    
+  - platform: template
+    name: leak_status_led_blink
+    id: leak_status_led_blink
+    optimistic: true
+    turn_on_action:
+    - while:
+        condition:
+          lambda: 'return true;'
+        then:
+        - switch.turn_on: leak_status_led
+        - delay: 500ms 
+        - switch.turn_off: leak_status_led
+        - delay: 500ms
+    turn_off_action:
+    - switch.turn_off: leak_status_led      

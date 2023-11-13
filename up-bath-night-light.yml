@@ -4,26 +4,21 @@ substitutions:
   ipPrefix:  !secret ip_prefix
   id: "6"
 
-<<: !include base.yaml
-
 # Configuration for TGWF115PQM (Small 10A plug)
 
-esphome:
-  name: ${devicename}
-  comment: ${ipPrefix}.${id}
-  platform: ESP8266
+packages:
+  device_base: !include base.yaml
+    
+esp8266:
   board: esp01_1m
-
-time:
-  - platform: homeassistant
-    id: homeassistant_time
+  restore_from_flash: true
     
 binary_sensor:
   - platform: gpio
     pin:
       number: GPIO3
       inverted: True
-    id: button
+    id: physical_button
     internal: true
     on_press:
       then:

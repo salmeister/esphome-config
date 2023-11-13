@@ -18,10 +18,8 @@ esphome:
           cold_white: 45%
           warm_white: 100%
 
-libretuya:
-  board: wb3s
-  framework:
-    version: dev
+bk72xx:
+  board: generic-bk7231t-qfn32-tuya
 
 time:
   - platform: homeassistant
@@ -31,28 +29,29 @@ light:
   - platform: rgbww
     id: downlight
     name: ${shortname}
-    red: red
-    green: green
-    blue: blue
-    cold_white: cold_white
-    warm_white: warm_white
-    cold_white_color_temperature: 6535 K
-    warm_white_color_temperature: 2702 K
+    color_interlock: true
+    cold_white_color_temperature: 6500 K
+    warm_white_color_temperature: 2700 K
+    red: output_red
+    green: output_green
+    blue: output_blue
+    cold_white: output_cold
+    warm_white: output_warm
     restore_mode: ALWAYS_ON
 
 output:
-  - platform: ledc
-    id: red
-    pin: D8
-  - platform: ledc
-    id: green
-    pin: D3
-  - platform: ledc
-    id: blue
-    pin: D2
-  - platform: ledc
-    id: cold_white
-    pin: D9
-  - platform: ledc
-    id: warm_white
-    pin: D4
+  - platform: libretiny_pwm
+    id: output_red
+    pin: P9
+  - platform: libretiny_pwm
+    id: output_green
+    pin: P24
+  - platform: libretiny_pwm
+    id: output_blue
+    pin: P26
+  - platform: libretiny_pwm
+    id: output_cold
+    pin: P8
+  - platform: libretiny_pwm
+    id: output_warm
+    pin: P6

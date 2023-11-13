@@ -4,14 +4,12 @@ substitutions:
   ipPrefix:  !secret ip_prefix
   id: "7"
 
-<<: !include base.yaml
-
-esphome:
-  name: ${devicename}
-  comment: ${ipPrefix}.${id}
-  platform: ESP8266
+packages:
+  device_base: !include base.yaml
+    
+esp8266:
   board: d1_mini_lite
-
+  restore_from_flash: true
 
 sensor:
   - platform: ultrasonic
@@ -24,5 +22,5 @@ sensor:
     update_interval: 120s
   
     filters:
-      - lambda: return 43-(x*100);
+      - lambda: return 48-(x*100);
       - filter_out: nan
