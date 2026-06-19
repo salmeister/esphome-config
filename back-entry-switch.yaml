@@ -11,7 +11,6 @@ packages:
 esp8266:
   board: esp01_1m
   restore_from_flash: true
-      
 
 # https://community.home-assistant.io/t/milfra-motion-sensor-light-switch-mfa05/439857/8
 # https://templates.blakadder.com/cloudfree_SWM1.html
