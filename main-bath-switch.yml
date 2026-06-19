@@ -1,7 +1,7 @@
 substitutions:
-  devicename: main-bath-switch
-  shortname: "Main Bath"
-  fullname: "Main Bath Switch"
+  devicename: master-bath-switch
+  shortname: "Master Bath"
+  fullname: "Master Bath Switch"
   ipPrefix:  !secret ip_prefix
   id: "15"
 
