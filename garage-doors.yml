@@ -1,0 +1,108 @@
+substitutions:
+  devicename: garage-doors
+  fullname: "Garage Doors"
+  ipPrefix:  !secret ip_prefix
+  id: "14"
+
+packages:
+  device_base: !include base.yaml
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+esp32_ble_tracker:
+  scan_parameters:
+    active: true
+
+bluetooth_proxy:   
+  active: true
+
+switch:
+  - platform: gpio
+    name: Garage Door Relay
+    pin:
+      number: GPIO22
+      inverted: false
+    id: relay1
+    restore_mode: ALWAYS_OFF 
+  - platform: gpio
+    name: Third Stall Relay
+    pin:
+      number: GPIO23
+      inverted: false
+    id: relay2
+    restore_mode: ALWAYS_OFF 
+
+binary_sensor:
+  - platform: gpio
+    name: Garage Door Reed
+    pin: 
+      number: GPIO18
+      mode: INPUT_PULLUP
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms
+    id: reed_switch1
+    internal: true
+  - platform: gpio
+    name: Third Stall Reed
+    pin: 
+      number: GPIO19
+      mode: INPUT_PULLUP
+    filters:
+      - delayed_on: 100ms
+      - delayed_off: 100ms
+    id: reed_switch2
+    internal: true
+    
+cover:
+  - platform: template
+    device_class: garage
+    name: Garage Door
+    id: template_cover1
+    lambda: |-
+      if (id(reed_switch1).state) {
+        id(template_cover1).set_icon("mdi:garage-open-variant");
+        return COVER_OPEN;
+      } else {
+        id(template_cover1).set_icon("mdi:garage-variant");
+        return COVER_CLOSED;
+      }
+    open_action:
+      - switch.turn_on: relay1
+      - delay: 0.5s
+      - switch.turn_off: relay1
+    close_action:
+      - switch.turn_on: relay1
+      - delay: 0.5s
+      - switch.turn_off: relay1      
+    stop_action:
+      - switch.turn_on: relay1
+      - delay: 0.5s
+      - switch.turn_off: relay1      
+  - platform: template
+    device_class: garage
+    name: Third Stall
+    id: template_cover2
+    lambda: |-
+      if (id(reed_switch2).state) {
+        id(template_cover2).set_icon("mdi:garage-open");
+        return COVER_OPEN;
+      } else {
+        id(template_cover2).set_icon("mdi:garage");
+        return COVER_CLOSED;
+      }
+    open_action:
+      - switch.turn_on: relay2
+      - delay: 0.5s
+      - switch.turn_off: relay2
+    close_action:
+      - switch.turn_on: relay2
+      - delay: 0.5s
+      - switch.turn_off: relay2
+    stop_action:
+      - switch.turn_on: relay2
+      - delay: 0.5s
+      - switch.turn_off: relay2
