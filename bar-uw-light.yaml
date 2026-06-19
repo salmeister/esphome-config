@@ -1,7 +1,7 @@
 substitutions:
   devicename: bar-uw-light
   shortname: "Bar UW"
-  fullname: "Bar UWgit pull Light"
+  fullname: "Bar UW Light"
   ipPrefix:  !secret ip_prefix
   id: "29"
 
@@ -19,11 +19,7 @@ esphome:
           warm_white: 100%
 
 bk72xx:
-  board: generic-bk7231t-qfn32-tuya
-
-time:
-  - platform: homeassistant
-    id: homeassistant_time
+  board: wb3s
 
 light:
   - platform: rgbww
