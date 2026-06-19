@@ -1,9 +1,17 @@
-
 esphome:
   name: ${devicename}
   comment: ${ipPrefix}.${id}
+  platformio_options:
+    build_flags:
+      -DMBED_CONF_LWIP_TCP_MSS=1460
+    lib_ignore:
+      - RPAsyncTCP
 
 wifi:
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: ${fullname} AP
+    password: !secret fallback_psswd
   networks:
     ssid: "SALNET_IoT"
     password: !secret iot_psswd
@@ -11,22 +19,17 @@ wifi:
       static_ip: "${ipPrefix}.${id}"
       gateway: !secret iot_gateway
       subnet: !secret subnet
-      dns1: !secret local_ip
-      dns2: 1.1.1.1
+  use_address: "${ipPrefix}.${id}"
   fast_connect: true
-  reboot_timeout: 0s
+  reboot_timeout: 15min
 
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
-  ap:
-    ssid: ${fullname} AP
-    password: !secret fallback_psswd
-
-captive_portal:
+#captive_portal:
 
 logger:
 
 ota:
-  password: !secret ota_psswd
+  - platform: esphome
+    password: !secret ota_psswd
 
 #web_server: 
 
@@ -43,14 +46,13 @@ text_sensor:
   - platform: wifi_info
     ip_address:
       name: "IP Address: ${fullname}"
-      update_interval: 300min
     mac_address:
       name: "MAC Address: ${fullname}"
 
 sensor:
   - platform: wifi_signal
     name: "WiFi Signal dB: ${fullname}"
-    id: "andy_phone_charger_manual_id_wifi_signal_db"
+    id: "manual_id_wifi_signal_db"
     update_interval: 15min
     entity_category: "diagnostic"
 
@@ -60,4 +62,4 @@ button:
     entity_category: "config"
   - platform: safe_mode
     name: "Restart (Safe Mode): ${fullname}"
-    entity_category: "config"
+    entity_category: "diagnostic"
