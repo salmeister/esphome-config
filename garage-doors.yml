@@ -62,14 +62,7 @@ cover:
     device_class: garage
     name: Garage Door
     id: template_cover1
-    lambda: |-
-      if (id(reed_switch1).state) {
-        id(template_cover1).set_icon("mdi:garage-open-variant");
-        return COVER_OPEN;
-      } else {
-        id(template_cover1).set_icon("mdi:garage-variant");
-        return COVER_CLOSED;
-      }
+    icon: mdi:garage-variant
     open_action:
       - switch.turn_on: relay1
       - delay: 0.5s
@@ -86,14 +79,7 @@ cover:
     device_class: garage
     name: Third Stall
     id: template_cover2
-    lambda: |-
-      if (id(reed_switch2).state) {
-        id(template_cover2).set_icon("mdi:garage-open");
-        return COVER_OPEN;
-      } else {
-        id(template_cover2).set_icon("mdi:garage");
-        return COVER_CLOSED;
-      }
+    icon: mdi:garage-variant
     open_action:
       - switch.turn_on: relay2
       - delay: 0.5s
