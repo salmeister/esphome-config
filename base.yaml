@@ -1,9 +1,9 @@
 esphome:
   name: ${devicename}
   comment: ${ipPrefix}.${id}
+  build_flags:
+    - "-DMBED_CONF_LWIP_TCP_MSS=1460"
   platformio_options:
-    build_flags:
-      -DMBED_CONF_LWIP_TCP_MSS=1460
     lib_ignore:
       - RPAsyncTCP
 
