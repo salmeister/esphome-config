@@ -63,6 +63,12 @@ cover:
     name: Garage Door
     id: template_cover1
     icon: mdi:garage-variant
+    lambda: |-
+      if (id(reed_switch1).state) {
+        return COVER_OPEN;
+      } else {
+        return COVER_CLOSED;
+      }
     open_action:
       - switch.turn_on: relay1
       - delay: 0.5s
@@ -70,16 +76,23 @@ cover:
     close_action:
       - switch.turn_on: relay1
       - delay: 0.5s
-      - switch.turn_off: relay1      
+      - switch.turn_off: relay1
     stop_action:
       - switch.turn_on: relay1
       - delay: 0.5s
-      - switch.turn_off: relay1      
+      - switch.turn_off: relay1
+
   - platform: template
     device_class: garage
     name: Third Stall
     id: template_cover2
     icon: mdi:garage-variant
+    lambda: |-
+      if (id(reed_switch2).state) {
+        return COVER_OPEN;
+      } else {
+        return COVER_CLOSED;
+      }
     open_action:
       - switch.turn_on: relay2
       - delay: 0.5s
