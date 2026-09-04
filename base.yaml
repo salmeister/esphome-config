@@ -8,7 +8,6 @@ esphome:
       - RPAsyncTCP
 
 wifi:
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: ${fullname} AP
     password: !secret fallback_psswd
@@ -23,7 +22,7 @@ wifi:
   fast_connect: true
   reboot_timeout: 15min
 
-#captive_portal:
+captive_portal:
 
 logger:
 
