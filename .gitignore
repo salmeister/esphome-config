@@ -5,3 +5,10 @@
 /secrets.yaml
 /secrets.yml
 /trash/
+/secrets*.yaml
+!/secrets.example.yaml
+.pioenvs/
+.piolibdeps/
+/build/
+*.bin
+tmp*
