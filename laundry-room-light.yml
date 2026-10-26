@@ -5,11 +5,10 @@ substitutions:
   ipPrefix:  !secret ip_prefix
   id: "21"
 
-<<: !include base.yaml
+packages:
+  device_base: !include base.yaml
 
 esphome:
-  name: ${devicename}
-  comment: "${ipPrefix}.${id}"
   on_boot:
     then:
       - light.turn_on: 
