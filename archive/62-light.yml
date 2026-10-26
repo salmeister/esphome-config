@@ -1,9 +1,9 @@
 substitutions:
-  devicename: basement-tv-ln-light
-  shortname: "Basement TV LN"
-  fullname: "Basement TV LN Light"
+  devicename: sixty-two-light
+  shortname: "Sixty Two"
+  fullname: "Sixty Two Light"
   ipPrefix:  !secret ip_prefix
-  id: "44"
+  id: "62"
 
 <<: !include base.yaml
 

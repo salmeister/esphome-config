@@ -1,12 +1,12 @@
 substitutions:
-  devicename: storage-room-power
-  fullname: "Storage Room Power"
+  devicename: power-monitor-plug-4
+  fullname: "Power Monitor Plug 4"
   ipPrefix:  !secret ip_prefix
   id: "4"
 
 packages:
   device_base: !include base.yaml
-
+    
 esp8266:
   board: esp01_1m
   restore_from_flash: true
@@ -18,7 +18,7 @@ binary_sensor:
     pin:
       number: GPIO3
       inverted: True
-    id: button
+    id: physical_button
     internal: true
     on_press:
       then:
@@ -28,10 +28,10 @@ binary_sensor:
 switch:
   # Main plug control relay
   - platform: gpio
+    name: ${fullname}
     id: relay
-    name: "${fullname}"
     pin: GPIO14
-    restore_mode: ALWAYS_ON
+    restore_mode: ALWAYS_OFF
     
   # Used for Status LED below, but could be repurposed!
   # - platform: gpio
