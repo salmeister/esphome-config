@@ -5,7 +5,8 @@ substitutions:
   ipPrefix:  !secret ip_prefix
   id: "67"
 
-<<: !include base.yaml
+packages:
+  device_base: !include base.yaml
 
 bk72xx:
   board: generic-bk7231n-qfn32-tuya

@@ -12,12 +12,12 @@ wifi:
     ssid: ${fullname} AP
     password: !secret fallback_psswd
   networks:
-    ssid: "SALNET_IoT"
-    password: !secret iot_psswd
-    manual_ip:
-      static_ip: "${ipPrefix}.${id}"
-      gateway: !secret iot_gateway
-      subnet: !secret subnet
+    - ssid: !secret iot_ssid
+      password: !secret iot_psswd
+      manual_ip:
+        static_ip: "${ipPrefix}.${id}"
+        gateway: !secret iot_gateway
+        subnet: !secret subnet
   use_address: "${ipPrefix}.${id}"
   fast_connect: true
   reboot_timeout: 15min
